@@ -49,5 +49,15 @@ def create_index_html(news_items):
 
 
 latest_news = get_latest_news()
+data_berita = []
+for news_item in latest_news[:10]:
+    data_berita.append(
+        {
+            "judul": news_item.title,
+            "link": news_item.link,
+            "sentimen": analisis_sentimen(news_item.title),
+        }
+    )
+
 create_index_html(latest_news)
 print("File index.html berhasil dibuat.")
