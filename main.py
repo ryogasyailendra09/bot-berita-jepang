@@ -30,10 +30,13 @@ def analyze():
         judul = news_item.title
         try:
             response = client.models.generate_content(
-                model='gemini-2.5-flash-lite',
-                contents="Baca judul berita Jepang ini, balas HANYA dengan satu kata "
-                "(Positif, Negatif, atau Netral): " + judul
+            model='gemini-2.5-flash-lite', 
+            contents="Baca judul berita Jepang ini, balas HANYA dengan satu kata (Positif, Negatif, atau Netral): " + judul,
+            config=genai.types.GenerateContentConfig(
+                max_output_tokens=5,
+                temperature=0.1
             )
+        )
             sentimen = response.text.strip()
         except Exception:
             sentimen = "Gagal Diproses (Server Sibuk)"
