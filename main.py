@@ -1,7 +1,9 @@
-import feedparser
-from deep_translator import GoogleTranslator
+import os
+import time
 from html import escape
-from textblob import TextBlob
+
+import feedparser
+import google.generativeai as genai
 
 
 def get_latest_news():
@@ -10,15 +12,27 @@ def get_latest_news():
     return feed.entries
 
 
-def analisis_sentimen(teks):
-    teks_inggris = GoogleTranslator(source="ja", target="en").translate(teks)
-    polarity = TextBlob(teks_inggris).sentiment.polarity
+def analisis_berita(teks_jepang):
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "Variabel lingkungan GOOGLE_API_KEY belum diatur."
+        )
 
-    if polarity > 0:
-        return "Positif"
-    if polarity < 0:
-        return "Negatif"
-    return "Netral"
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    prompt = (
+        "Baca judul berita Jepang ini, lalu balas HANYA dengan satu kata: "
+        f"Positif, Negatif, atau Netral: {teks_jepang}"
+    )
+    hasil = model.generate_content(prompt).text.strip()
+
+    if hasil in {"Positif", "Negatif", "Netral"}:
+        return hasil
+    raise ValueError(
+        f"Respons model tidak valid: {hasil!r}. "
+        "Respons harus Positif, Negatif, atau Netral."
+    )
 
 
 def create_index_html(news_items):
@@ -48,16 +62,24 @@ def create_index_html(news_items):
         index_file.write(html_content)
 
 
-latest_news = get_latest_news()
-data_berita = []
-for news_item in latest_news[:10]:
-    data_berita.append(
-        {
-            "judul": news_item.title,
-            "link": news_item.link,
-            "sentimen": analisis_sentimen(news_item.title),
-        }
-    )
+def main():
+    latest_news = get_latest_news()
+    berita_untuk_dianalisis = latest_news[:10]
 
-create_index_html(latest_news)
-print("File index.html berhasil dibuat.")
+    data_berita = []
+    for news_item in berita_untuk_dianalisis:
+        data_berita.append(
+            {
+                "judul": news_item.title,
+                "link": news_item.link,
+                "sentimen": analisis_berita(news_item.title),
+            }
+        )
+        time.sleep(2)
+
+    create_index_html(latest_news)
+    print("File index.html berhasil dibuat.")
+
+
+if __name__ == "__main__":
+    main()
