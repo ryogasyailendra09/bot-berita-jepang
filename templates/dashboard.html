@@ -48,6 +48,48 @@
             letter-spacing: 0.02em;
         }
 
+        .statistics-panel {
+            margin: 0 auto 2.5rem;
+            max-width: 900px;
+        }
+
+        .stat-pill {
+            height: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid;
+            border-radius: 999px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-pill.success {
+            background: rgba(25, 135, 84, 0.24);
+            border-color: rgba(117, 255, 184, 0.45);
+        }
+
+        .stat-pill.danger {
+            background: rgba(220, 53, 69, 0.24);
+            border-color: rgba(255, 139, 150, 0.45);
+        }
+
+        .stat-pill.secondary {
+            background: rgba(108, 117, 125, 0.24);
+            border-color: rgba(210, 214, 218, 0.4);
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.82rem;
+            opacity: 0.82;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
         .news-card {
             height: 100%;
             background: linear-gradient(
@@ -116,6 +158,30 @@
                 Dashboard Sentimen Berita Jepang
             </h1>
         </header>
+
+        <section class="statistics-panel" aria-labelledby="statistics-title">
+            <h2 id="statistics-title" class="visually-hidden">Panel Statistik Ringkasan</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                <div class="col">
+                    <div class="stat-pill success text-center">
+                        <span class="stat-label">Bullish (Positif)</span>
+                        <span class="stat-value">{{ persen_positif }}%</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-pill danger text-center">
+                        <span class="stat-label">Bearish (Negatif)</span>
+                        <span class="stat-value">{{ persen_negatif }}%</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-pill secondary text-center">
+                        <span class="stat-label">Netral</span>
+                        <span class="stat-value">{{ persen_netral }}%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <div class="row row-cols-1 row-cols-md-3 g-4 news-grid">
             {% for item in berita %}

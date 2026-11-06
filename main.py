@@ -50,7 +50,30 @@ def analyze():
         )
         time.sleep(2)
 
-    return render_template("dashboard.html", berita=data_berita)
+    total_berita = len(data_berita) or 1
+    persen_positif = round(
+        sum(item["sentimen"] == "Positif" for item in data_berita)
+        / total_berita
+        * 100
+    )
+    persen_negatif = round(
+        sum(item["sentimen"] == "Negatif" for item in data_berita)
+        / total_berita
+        * 100
+    )
+    persen_netral = round(
+        sum(item["sentimen"] == "Netral" for item in data_berita)
+        / total_berita
+        * 100
+    )
+
+    return render_template(
+        "dashboard.html",
+        berita=data_berita,
+        persen_positif=persen_positif,
+        persen_negatif=persen_negatif,
+        persen_netral=persen_netral,
+    )
 
 
 if __name__ == "__main__":
